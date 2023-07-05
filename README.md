@@ -1,2 +1,3 @@
-# puppeteer-bot
-Puppeteer Bot - Queue Based Browser Client Automation (For CTFs and maybe more...)
+# ctf-bot-server
+
+CTF Bot (Server) - Queue Based Client For Automation Of CTF Challenges
