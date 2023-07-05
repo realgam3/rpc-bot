@@ -1,5 +1,4 @@
 const Xvfb = require("xvfb");
-const {options} = require("axios");
 
 const {getBrowser} = require("./utils");
 
@@ -16,7 +15,6 @@ async function main(config = require("./config")) {
 
     // Start Browser
     const browser = await getBrowser(config.browser);
-    await options?.extend?.init?.();
 
     require("../../").main({
         context: {

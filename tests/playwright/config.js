@@ -11,10 +11,10 @@ const config = {
         "password": getEnv("RABBITMQ_PASSWORD", "guest"),
         "prefetch": parseInt(getEnv("PREFETCH", 1)),
     },
+    "init": async () => {
+        log.info(`Initializing Browser...`);
+    },
     "extend": {
-        "init": async () => {
-            log.info(`Initializing Browser...`);
-        },
         "example": async () => {
             log.info(`Example extend function`);
         },

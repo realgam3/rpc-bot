@@ -25,7 +25,7 @@ async function main(options = {}) {
         }
     }
 
-    config?.extend?.init?.(options?.context);
+    config?.init?.(options?.context);
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         durable: false,
