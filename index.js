@@ -14,14 +14,13 @@ async function main(options = {}) {
         try {
             connection = await amqplib.connect({
                 protocol: "amqp",
-                maxLength: config.queue.maxLength,
                 port: config.queue.port,
                 hostname: config.queue.host,
                 username: config.queue.username,
                 password: config.queue.password,
             });
         } catch (error) {
-            console.error(error);
+            log.error(`Failed to connect to queue (${error.name}: ${error.message})`);
             await sleep();
         }
     }
@@ -29,7 +28,7 @@ async function main(options = {}) {
     config?.extend?.init?.(options?.context);
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
-        durable: false
+        durable: false,
     });
     await channel.prefetch(config.queue.prefetch);
     await channel.consume(config.queue.name, async function (msg) {

@@ -9,8 +9,7 @@ const config = {
         "name": getEnv("QUEUE_NAME", "queue"),
         "username": getEnv("RABBITMQ_USERNAME", "guest"),
         "password": getEnv("RABBITMQ_PASSWORD", "guest"),
-        "prefetch": 1,
-        "maxLength": 1,
+        "prefetch": parseInt(getEnv("PREFETCH", 1)),
     },
     "extend": {
         "init": async () => {
