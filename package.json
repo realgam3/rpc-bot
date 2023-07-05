@@ -12,7 +12,8 @@
   "dependencies": {
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
-    "json-stringify-safe": "^5.0.1"
+    "json-stringify-safe": "^5.0.1",
+    "minimatch": "^9.0.2"
   },
   "description": ""
 }

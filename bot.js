@@ -1,10 +1,12 @@
 const axios = require("axios");
+const {minimatch} = require('minimatch')
 const stringify = require('json-stringify-safe');
 
 const {getKey} = require("./utils");
+const defaultConfig = require("./config")
 const {TimeOutError} = require("./exceptions");
 
-function bot(data, context, config = require("./config")) {
+function bot(data, context, config = defaultConfig) {
     let timedOut = false;
     return Promise.race([
         new Promise(async (resolve, reject) => {
@@ -14,7 +16,7 @@ function bot(data, context, config = require("./config")) {
                         return reject(new TimeOutError());
                     }
 
-                    if (config.allowed_actions && !config.allowed_actions.includes(action)) {
+                    if (!config?.allowed_actions?.some((pattern) => minimatch(action, pattern))) {
                         console.warn(`[WARN] the action ${action} was not allowed`);
                         continue;
                     }
@@ -58,7 +60,7 @@ function bot(data, context, config = require("./config")) {
 }
 
 async function run(data = {}, options = {}) {
-    const config = getKey(options, "config", require("./config"));
+    const config = getKey(options, "config", defaultConfig);
     const callbacks = getKey(options, "callbacks", {});
     // Bot Context
     const context = {
