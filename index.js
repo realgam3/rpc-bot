@@ -3,7 +3,7 @@
 const amqplib = require("amqplib");
 
 const bot = require("./bot");
-const {logger} = require("./log");
+const {log} = require("./logs");
 const {sleep, getKey} = require("./utils");
 
 async function main(options = {}) {
@@ -26,19 +26,20 @@ async function main(options = {}) {
         }
     }
 
-    config?.extend?.init?.(options?.context, options?.config);
+    config?.extend?.init?.(options?.context);
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         durable: false
     });
     await channel.prefetch(config.queue.prefetch);
     await channel.consume(config.queue.name, async function (msg) {
-        logger.info(`Received: ${msg.content.toString().length} bytes`);
+        log.info(`Received: ${msg.content.toString().length} bytes`);
+        log.debug(`Received: ${msg.content.toString()}`);
         try {
             const data = JSON.parse(msg.content.toString());
             await bot.run(data, options);
         } catch (error) {
-            logger.error(`${error.name}: ${error.message}`);
+            log.error(`Failed to run task (${error.name}: ${error.message})`);
         }
         return channel.ackAll();
     });

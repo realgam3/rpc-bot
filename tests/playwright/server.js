@@ -44,7 +44,7 @@ async function main(config = require("./config")) {
                 await context.context.close();
             },
             onError(error) {
-                console.error(error);
+                // console.error(error);
             }
         }
     }).catch(async (error) => {

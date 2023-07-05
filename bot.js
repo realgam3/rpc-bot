@@ -2,10 +2,10 @@ const axios = require("axios");
 const {minimatch} = require('minimatch')
 const stringify = require('json-stringify-safe');
 
-const {logger} = require("./log");
-const {getKey} = require("./utils");
+const {log} = require("./logs");
 const defaultConfig = require("./config");
-const {TimeOutError} = require("./exceptions");
+const {TimeOutError} = require("./errors");
+const {getKey, trimLongStrings} = require("./utils");
 
 function bot(data, context, config = defaultConfig) {
     let timedOut = false;
@@ -18,15 +18,12 @@ function bot(data, context, config = defaultConfig) {
                     }
 
                     if (!config?.allowed_actions?.some((pattern) => minimatch(action, pattern))) {
-                        logger.warn(`the action ${action} was not allowed`);
+                        log.warn(`The action ${action} was not allowed`);
                         continue;
                     }
 
-                    let actionArgs = JSON.parse(JSON.stringify(args));
-                    if (config?.masks?.[action]) {
-                        await config.masks[action].apply(this, actionArgs);
-                    }
-                    logger.info(`${action}(${JSON.stringify(actionArgs).replace(/(^\[|]$)/g, "")})`);
+                    let actionArgs = trimLongStrings(args);
+                    log.info(`Executing: ${action}(${actionArgs.map(JSON.stringify).join(", ")})`);
 
                     const [objectName, funcName] = action.split(".");
                     const object = context[objectName];
@@ -37,7 +34,7 @@ function bot(data, context, config = defaultConfig) {
                         "result": context.result,
                     });
                 } catch (error) {
-                    logger.error(`failed to run action ${action}. ${error.name}: ${error.message}`);
+                    log.error(`Failed to run action ${action} (${error.name}: ${error.message})`);
                     context.error = error;
                     context.results.push({
                         "action": action,
@@ -83,7 +80,7 @@ async function run(data = {}, options = {}) {
     try {
         await bot(data, context, config);
     } catch (error) {
-        logger.error(`[ERROR] failed to run bot. ${error.name}: ${error.message}`);
+        log.error(`Failed to run bot (${error.name}: ${error.message})`);
         context.error = error;
         await callbacks?.onError?.(error, context, config);
     }
@@ -102,7 +99,7 @@ async function run(data = {}, options = {}) {
                 "Content-Type": "application/json",
             }
         }).catch((error) => {
-            logger.error(`failed to send webhook. ${error.name}: ${error.message}`);
+            log.error(`Failed to send webhook (${error.name}: ${error.message})`);
         });
     }
 

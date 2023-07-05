@@ -2,13 +2,13 @@ const pino = require("pino");
 
 const {getEnv} = require("./utils");
 
-const logger = pino({
-    level: getEnv("LOG_LEVEL", "info"),
+const log = pino({
+    level: getEnv("LOG_LEVEL", "info").toLowerCase(),
     transport: {
         target: "pino-pretty"
     },
 });
 
 module.exports = {
-    logger,
+    log,
 }

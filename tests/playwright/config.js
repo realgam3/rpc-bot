@@ -1,4 +1,6 @@
+const {log} = require("../../logs");
 const {getEnv} = require("../../utils");
+
 const config = {
     "timeout": parseInt(getEnv("TIMEOUT", 30000)),
     "queue": {
@@ -12,10 +14,10 @@ const config = {
     },
     "extend": {
         "init": async () => {
-            console.log(`[+] Initializing Browser...`);
+            log.info(`Initializing Browser...`);
         },
         "example": async () => {
-            console.log(`Example extend function`);
+            log.info(`Example extend function`);
         },
         // Add close pages function
         closePages: async () => {

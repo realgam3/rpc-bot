@@ -1,4 +1,4 @@
-const {logger} = require("./log");
+const {log} = require("./logs");
 const {getEnv} = require("./utils");
 
 const config = {
@@ -14,10 +14,10 @@ const config = {
     },
     "extend": {
         "init": async () => {
-            logger.debug(`[+] Initializing...`);
+            log.info(`Initializing...`);
         },
         "example": async () => {
-            logger.debug(`Example extend function`);
+            log.info(`Example extend function`);
         },
     },
     "allowed_actions": [
