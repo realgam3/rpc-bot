@@ -4,8 +4,8 @@ const stringify = require('json-stringify-safe');
 
 const {log} = require("./logs");
 const defaultConfig = require("./config");
-const {TimeOutError} = require("./errors");
 const {getKey, trimLongStrings} = require("./utils");
+const {TimeOutError, MethodNotAllowedError} = require("./errors");
 
 function bot(data, context, config = defaultConfig) {
     let timedOut = false;
@@ -19,6 +19,7 @@ function bot(data, context, config = defaultConfig) {
 
                     if (!config?.allowed_actions?.some((pattern) => minimatch(action, pattern))) {
                         log.warn(`The action ${action} was not allowed`);
+                        // return reject(new MethodNotAllowedError());
                         continue;
                     }
 
@@ -28,6 +29,9 @@ function bot(data, context, config = defaultConfig) {
                     const [objectName, funcName] = action.split(".");
                     const object = context[objectName];
                     const func = object[funcName];
+                    if (objectName === "extend") {
+                        args = [context, ...args];
+                    }
                     context.result = await func.apply(object, args);
                     context.results.push({
                         "action": action,
@@ -71,7 +75,6 @@ async function run(data = {}, options = {}) {
         // Extend with custom functions
         extend: config?.extend || {},
     };
-    global.context = context;
 
     // Setup Events
     await callbacks?.onStart?.(context, config);
@@ -93,7 +96,7 @@ async function run(data = {}, options = {}) {
             "error": (context?.error ? {
                 "name": context.error.name,
                 "message": context.error.message,
-            } : {}),
+            } : undefined),
         }), {
             headers: {
                 "Content-Type": "application/json",

@@ -19,7 +19,7 @@ const config = {
             log.info(`Example extend function`);
         },
         // Add close pages function
-        closePages: async () => {
+        closePages: async (context) => {
             // for (let page of await context.context.pages()) {
             //     await page.close();
             // }
@@ -32,10 +32,10 @@ const config = {
             }
             await context.page.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
         },
-        slowType: async (selector, text, options = {"delay": 500}) => {
+        slowType: async (context, selector, text, options = {"delay": 500}) => {
             await context.page.type(selector, text, options);
         },
-        setCookies: async (cookies) => {
+        setCookies: async (context, cookies) => {
             await context.context.addCookies(cookies);
         },
     },

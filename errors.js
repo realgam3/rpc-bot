@@ -5,6 +5,13 @@ class TimeOutError extends Error {
     }
 }
 
+class MethodNotAllowedError extends Error {
+    constructor(message = "Method not allowed") {
+        super(message);
+        this.name = "MethodNotAllowedError";
+    }
+}
+
 module.exports = {
     TimeOutError,
 }
