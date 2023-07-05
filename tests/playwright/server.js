@@ -1,11 +1,9 @@
 const Xvfb = require("xvfb");
 
+const {log} = require("../../logs");
 const {getBrowser} = require("./utils");
 
 async function main(config = require("./config")) {
-    config.queue.host = "localhost";
-    config.timeout = 6000;
-
     // Start xvfb
     const xvfb = new Xvfb({
         silent: true,
@@ -22,7 +20,7 @@ async function main(config = require("./config")) {
         },
         config: config,
         callbacks: {
-            onStart: async function (context, config) {
+            onStart: async (context, config) => {
                 // Create Browser Context
                 context.context = await context.browser.newContext(config.context);
 
@@ -37,22 +35,27 @@ async function main(config = require("./config")) {
                 // Hook JavaScript Functions
                 await context.page.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
             },
-            onFinish: async function (context) {
+            onFinish: async (context) => {
                 // Close Browser Context
                 await context.context.close();
             },
-            onError(error) {
-                // console.error(error);
+            onError: async (error) => {
+                if (error.name === "TimeoutError") {
+                    console.error("Bot task timed out");
+                }
+            },
+            onExit: async () => {
+                log.info(`Cleaning up...`);
+
+                // Close Browser
+                await browser.close();
+
+                // Stop xvfb
+                xvfb.stop();
             }
         }
     }).catch(async (error) => {
-        console.error(error);
-
-        // Close Browser
-        await browser.close();
-
-        // Stop xvfb
-        xvfb.stop();
+        log.error(`Failed to run bot (${error.name}: ${error.message})`);
     });
 }
 

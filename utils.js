@@ -43,11 +43,21 @@ function trimLongStrings(obj, maxLen = 48) {
     return obj;
 }
 
+function onExit(callback) {
+    if (!callback) {
+        return;
+    }
+    process.on("exit", callback);
+    process.on("SIGINT", callback);
+    process.on("SIGTERM", callback);
+    process.on("uncaughtException", callback);
+}
 
 module.exports = {
     sleep,
     getKey,
     popKey,
     getEnv,
+    onExit,
     trimLongStrings,
 }

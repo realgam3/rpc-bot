@@ -4,7 +4,7 @@ const amqplib = require("amqplib");
 
 const bot = require("./bot");
 const {log} = require("./logs");
-const {sleep, getKey} = require("./utils");
+const {sleep, getKey, onExit} = require("./utils");
 
 async function main(options = {}) {
     const config = getKey(options, "config", require("./config"));
@@ -12,13 +12,7 @@ async function main(options = {}) {
     let connection = null;
     while (!connection) {
         try {
-            connection = await amqplib.connect({
-                protocol: "amqp",
-                port: config.queue.port,
-                hostname: config.queue.host,
-                username: config.queue.username,
-                password: config.queue.password,
-            });
+            connection = await amqplib.connect(config.queue.url);
         } catch (error) {
             log.error(`Failed to connect to queue (${error.name}: ${error.message})`);
             await sleep();
@@ -26,6 +20,7 @@ async function main(options = {}) {
     }
 
     config?.init?.(options?.context);
+    onExit(options?.callbacks?.onExit?.bind?.(null, options?.context, config));
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         durable: false,
