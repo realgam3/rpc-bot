@@ -34,7 +34,7 @@ async function main(options = {}) {
     await channel.prefetch(config.queue.prefetch);
     await channel.consume(config.queue.name, async function (msg) {
         log.info(`Received: ${msg.content.toString().length} bytes`);
-        log.debug(`Received: ${msg.content.toString()}`);
+        log.debug(`Data Received: ${msg.content.toString()}`);
         try {
             const data = JSON.parse(msg.content.toString());
             await bot.run(data, options);
