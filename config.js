@@ -8,8 +8,10 @@ const config = {
         "name": getEnv("QUEUE_NAME", "queue"),
         "prefetch": parseInt(getEnv("PREFETCH", 1)),
     },
-    "init": async () => {
-        log.info(`Initializing...`);
+    "events": {
+        "onInit": async () => {
+            log.info(`Initializing...`);
+        },
     },
     "extend": {
         "example": async () => {

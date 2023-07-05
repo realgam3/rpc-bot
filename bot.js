@@ -77,7 +77,7 @@ async function run(data = {}, options = {}) {
     };
 
     // Setup Events
-    await callbacks?.onStart?.(context, config);
+    await config?.events?.onTaskStart?.(context);
 
     // Run Bot
     try {
@@ -85,7 +85,7 @@ async function run(data = {}, options = {}) {
     } catch (error) {
         log.error(`Failed to run bot (${error.name}: ${error.message})`);
         context.error = error;
-        await callbacks?.onError?.(error, context, config);
+        await config?.events?.onTaskError?.(error, context);
     }
 
     // Report Results
@@ -107,7 +107,7 @@ async function run(data = {}, options = {}) {
     }
 
     // Cleanup
-    await callbacks?.onFinish?.(context, config);
+    await config?.events?.onTaskComplete?.(context);
 }
 
 module.exports = {

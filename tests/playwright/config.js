@@ -8,8 +8,43 @@ const config = {
         "name": getEnv("QUEUE_NAME", "queue"),
         "prefetch": parseInt(getEnv("PREFETCH", 1)),
     },
-    "init": async () => {
-        log.info(`Initializing Browser...`);
+    "events": {
+        "onInit": async () => {
+            log.info(`Initializing Browser...`);
+        },
+        "onExit": async (context) => {
+            log.info(`Cleaning up...`);
+
+            // Close Browser
+            await context.browser.close();
+
+            // Stop xvfb
+            await context.xvfb.stop();
+        },
+        "onTaskStart": async (context) => {
+            // Create Browser Context
+            context.context = await context.browser.newContext(config.context);
+
+            // Create Page
+            context.page = await context.context.newPage(config.page);
+
+            // Setup Events
+            for (let [eventName, event] of Object.entries(config.context.events)) {
+                context.context.on(eventName, event);
+            }
+
+            // Hook JavaScript Functions
+            await context.page.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
+        },
+        "onTaskComplete": async (context) => {
+            // Close Browser Context
+            await context.context.close();
+        },
+        "onTaskError": async (error) => {
+            if (error.name === "TimeOutError") {
+                log.debug("Bot task timed out");
+            }
+        },
     },
     "extend": {
         "example": async () => {

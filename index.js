@@ -19,8 +19,8 @@ async function main(options = {}) {
         }
     }
 
-    config?.init?.(options?.context);
-    onExit(options?.callbacks?.onExit?.bind?.(null, options?.context, config));
+    await config?.events?.onInit?.(options?.context);
+    await onExit(config?.events?.onExit?.bind?.(null, options?.context));
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         durable: false,
