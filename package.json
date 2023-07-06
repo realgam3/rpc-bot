@@ -16,6 +16,8 @@
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "commander": "^11.0.0",
+    "js-yaml": "^4.1.0",
+    "js-yaml-js-types": "^1.0.1",
     "json-stringify-safe": "^5.0.1",
     "minimatch": "^9.0.2",
     "pino": "^8.14.1",

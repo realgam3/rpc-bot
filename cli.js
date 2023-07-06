@@ -11,7 +11,7 @@ program
 
 program
     .option("-d, --debug", "output extra debugging")
-    .option("-c, --config <path>", "path to config.js file");
+    .option("-c, --config <path>", "path to config.(js|yaml|json) file");
 
 program.parse();
 

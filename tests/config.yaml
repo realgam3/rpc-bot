@@ -1,0 +1,13 @@
+timeout: ${TIMEOUT:-6000}
+queue:
+  url: ${RABBITMQ_URL:-amqp://guest:guest@localhost:5672}
+events:
+  "onInit": !!js/function >
+    async function (context) {
+      console.info(`Initializing Test...`);
+    }
+extend:
+  test: !!js/function >
+    async function (context) {
+      console.info("Test function");
+    }
