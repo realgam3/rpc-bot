@@ -1,3 +1,6 @@
+const {minimatch} = require("minimatch");
+const {MethodNotExistError} = require("./errors");
+
 function sleep(ms = 1000) {
     return new Promise(r => setTimeout(r, ms));
 }
@@ -73,6 +76,24 @@ function deepMerge(...objects) {
     return output;
 }
 
+function isAllowedAction(action, config) {
+    return !(action.split(".").some((attribute) => config?.disallowed_attributes?.includes?.(attribute)) ||
+        !config?.allowed_actions?.some((pattern) => minimatch(action, pattern)) ||
+        config?.disallowed_actions?.some((pattern) => minimatch(action, pattern)));
+}
+
+function getObjectAttribute(context, path) {
+    const parts = path.split('.');
+    let parent = context;
+    return [parent, parts.reduce((obj, part) => {
+        if (obj && typeof obj === 'object' && part in obj) {
+            parent = obj;
+            return obj[part];
+        } else {
+            throw new MethodNotExistError(`Method ${path} not exist.`);
+        }
+    }, context)];
+}
 
 module.exports = {
     sleep,
@@ -82,4 +103,6 @@ module.exports = {
     onExit,
     deepMerge,
     trimLongStrings,
+    isAllowedAction,
+    getObjectAttribute,
 }

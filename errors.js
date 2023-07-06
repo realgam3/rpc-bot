@@ -12,7 +12,16 @@ class MethodNotAllowedError extends Error {
     }
 }
 
+class MethodNotExistError extends Error {
+    constructor(message = "Method not Exist") {
+        super(message);
+        this.name = "MethodNotExistError";
+    }
+}
+
+
 module.exports = {
     TimeOutError,
+    MethodNotExistError,
     MethodNotAllowedError,
 }

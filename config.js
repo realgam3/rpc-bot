@@ -17,9 +17,22 @@ const config = {
         "example": async () => {
             log.info(`Example extend function`);
         },
+        "notAllowed": async () => {
+            log.warn(`This function is not allowed`);
+        }
     },
     "allowed_actions": [
-        "extend.example",
+        "extend.*",
+    ],
+    "disallowed_actions": [
+        "extend.notAllowed",
+    ],
+    "disallowed_attributes": [
+        "__proto__",
+        "constructor",
+        "prototype",
+        "toString",
+        "valueOf"
     ],
 }
 

@@ -4,33 +4,39 @@ const stringify = require('json-stringify-safe');
 
 const {log} = require("./logs");
 const defaultConfig = require("./config");
-const {getKey, trimLongStrings} = require("./utils");
-const {TimeOutError, MethodNotAllowedError} = require("./errors");
+const {getKey, trimLongStrings, isAllowedAction, getObjectAttribute} = require("./utils");
+const {TimeOutError, MethodNotAllowedError, MethodNotExistError} = require("./errors");
 
 function bot(data, context, config = defaultConfig) {
     let timedOut = false;
     return Promise.race([
         new Promise(async (resolve, reject) => {
+            let actions = Array.from(new Set(data.actions.map((action) => {
+                return action.action;
+            })));
+            let disAllowedActions = actions.map((action) => {
+                if (!isAllowedAction(action, config)) {
+                    return action;
+                }
+            }).filter(value => value);
+            if (disAllowedActions.length > 0) {
+                return reject(new MethodNotAllowedError(`Methods not allowed: ${disAllowedActions.join(", ")}`));
+            }
+
             for (let {action, args = []} of data.actions || []) {
                 try {
                     if (timedOut) {
                         return reject(new TimeOutError());
                     }
 
-                    if (!config?.allowed_actions?.some((pattern) => minimatch(action, pattern))) {
-                        return reject(new MethodNotAllowedError(`The action ${action} was not allowed`));
-                    }
-
                     let actionArgs = trimLongStrings(args);
                     log.info(`Executing: ${action}(${actionArgs.map(JSON.stringify).join(", ")})`);
 
-                    const [objectName, funcName] = action.split(".");
-                    const object = context[objectName];
-                    const func = object[funcName];
-                    if (objectName === "extend") {
+                    const [obj, func] = getObjectAttribute(context, action);
+                    if (action.split(".", 1)[0] === "extend") {
                         args = [context, ...args];
                     }
-                    context.result = await func.apply(object, args);
+                    context.result = await func.apply(obj, args);
                     context.results.push({
                         "action": action,
                         "result": context.result,
