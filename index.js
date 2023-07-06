@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const path = require("path");
+const axios = require("axios");
 const amqplib = require("amqplib");
+const stringify = require('json-stringify-safe');
 
 const bot = require("./bot");
 const {log} = require("./logs");
@@ -41,7 +43,25 @@ async function main(options = {}) {
         log.debug(`Data Received: ${msg.content.toString()}`);
         try {
             const data = JSON.parse(msg.content.toString());
-            await bot.run(data, options);
+
+            let res = await bot.run(data, options);
+            let resMsg = stringify(res);
+
+            if (data?.webhook) {
+                axios.post(data?.webhook, resMsg, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                }).catch((error) => {
+                    log.error(`Failed to send webhook (${error.name}: ${error.message})`);
+                });
+            }
+
+            if (msg?.properties?.replyTo) {
+                await channel.sendToQueue(msg.properties.replyTo, Buffer.from(resMsg), {
+                    correlationId: msg.properties.correlationId,
+                });
+            }
         } catch (error) {
             log.error(`Failed to run task (${error.name}: ${error.message})`);
         }

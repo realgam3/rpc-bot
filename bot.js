@@ -1,11 +1,7 @@
-const axios = require("axios");
-const {minimatch} = require('minimatch')
-const stringify = require('json-stringify-safe');
-
 const {log} = require("./logs");
 const defaultConfig = require("./config");
 const {getKey, trimLongStrings, isAllowedAction, getObjectAttribute} = require("./utils");
-const {TimeOutError, MethodNotAllowedError, MethodNotExistError} = require("./errors");
+const {TimeOutError, MethodNotAllowedError} = require("./errors");
 
 function bot(data, context, config = defaultConfig) {
     let timedOut = false;
@@ -67,7 +63,6 @@ function bot(data, context, config = defaultConfig) {
 
 async function run(data = {}, options = {}) {
     const config = getKey(options, "config", defaultConfig);
-    const callbacks = getKey(options, "callbacks", {});
     // Bot Context
     const context = {
         // Extend the context with the data
@@ -93,25 +88,19 @@ async function run(data = {}, options = {}) {
     }
 
     // Report Results
-    if (data?.webhook) {
-        axios.post(data.webhook, stringify({
-            "status": context?.error ? "fail" : "ok",
-            "result": context?.results.pop(),
-            "error": (context?.error ? {
-                "name": context.error.name,
-                "message": context.error.message,
-            } : undefined),
-        }), {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        }).catch((error) => {
-            log.error(`Failed to send webhook (${error.name}: ${error.message})`);
-        });
-    }
+    let res = {
+        "status": context?.error ? "fail" : "ok",
+        "result": context?.results.pop(),
+        "error": (context?.error ? {
+            "name": context.error.name,
+            "message": context.error.message,
+        } : undefined),
+    };
 
     // Cleanup
     await config?.events?.onTaskComplete?.(context);
+
+    return res;
 }
 
 module.exports = {
