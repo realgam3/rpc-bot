@@ -102,9 +102,9 @@ const config = {
     },
     "context": {
         "events": {
-            // "console": message => console.debug(`[${message.type().toUpperCase()}] ${message.text()}`),
-            "error": message => console.error(message),
-            "pageerror": message => console.error(message),
+            "console": message => log.debug(`[${message.type().toUpperCase()}] ${message.text()}`),
+            "error": message => log.error(message),
+            "pageerror": message => log.error(message),
         },
         "options": {
             "ignoreHTTPSErrors": true,
@@ -114,16 +114,16 @@ const config = {
         "evaluate": {
             "document_start": function () {
                 window.open = () => {
-                    console.warn('window.open');
+                    log.warn('window.open');
                 };
                 window.prompt = () => {
-                    console.warn('window.prompt');
+                    log.warn('window.prompt');
                 };
                 window.confirm = () => {
-                    console.warn('window.confirm');
+                    log.warn('window.confirm');
                 };
                 window.alert = () => {
-                    console.warn('window.alert');
+                    log.warn('window.alert');
                 };
             }
         }

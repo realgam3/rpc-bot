@@ -85,14 +85,15 @@ function isAllowedAction(action, config) {
 function getObjectAttribute(context, path) {
     const parts = path.split('.');
     let parent = context;
-    return [parent, parts.reduce((obj, part) => {
+    let func = parts.reduce((obj, part) => {
         if (obj && typeof obj === 'object' && part in obj) {
             parent = obj;
             return obj[part];
         } else {
             throw new MethodNotExistError(`Method ${path} not exist.`);
         }
-    }, context)];
+    }, context);
+    return [parent, func];
 }
 
 module.exports = {
