@@ -4,10 +4,10 @@ queue:
 events:
   "onInit": !!js/function >
     async function (context) {
-      console.info(`Initializing Test...`);
+      log.info(`Initializing Test...`);
     }
 extend:
   test: !!js/function >
     async function (context) {
-      console.info("Test function");
+      log.info("Test function");
     }

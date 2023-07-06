@@ -12,6 +12,8 @@ const {loadYaml} = require("./parsers");
 const defaultConfig = require("./config");
 const {sleep, getKey, onExit, deepMerge} = require("./utils");
 
+global.log = log;
+
 async function main(options = {}) {
     const args = getKey(options, "args", {});
     options.config = getKey(options, "config", defaultConfig);
