@@ -10,7 +10,7 @@
   "author": "Tomer Zait (realgam3)",
   "license": "Apache-2.0",
   "bin": {
-    "ctf-bot": "./cli.js"
+    "rpc-bot": "./cli.js"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
