@@ -18,9 +18,7 @@ function bot(data, context, config = defaultConfig) {
                     }
 
                     if (!config?.allowed_actions?.some((pattern) => minimatch(action, pattern))) {
-                        log.warn(`The action ${action} was not allowed`);
-                        // return reject(new MethodNotAllowedError());
-                        continue;
+                        return reject(new MethodNotAllowedError(`The action ${action} was not allowed`));
                     }
 
                     let actionArgs = trimLongStrings(args);

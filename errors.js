@@ -14,4 +14,5 @@ class MethodNotAllowedError extends Error {
 
 module.exports = {
     TimeOutError,
+    MethodNotAllowedError,
 }

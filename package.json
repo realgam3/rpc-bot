@@ -1,20 +1,21 @@
 {
-  "name": "ctf-bot-server",
+  "name": "rpc-bot-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node ./cli.js"
   },
   "keywords": [],
   "author": "Tomer Zait (realgam3)",
   "license": "Apache-2.0",
   "bin": {
-    "ctf-bot": "./server.js"
+    "ctf-bot": "./cli.js"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
+    "commander": "^11.0.0",
     "json-stringify-safe": "^5.0.1",
     "minimatch": "^9.0.2",
     "pino": "^8.14.1",

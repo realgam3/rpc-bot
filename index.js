@@ -1,13 +1,23 @@
 #!/usr/bin/env node
 
+const path = require("path");
 const amqplib = require("amqplib");
 
 const bot = require("./bot");
 const {log} = require("./logs");
-const {sleep, getKey, onExit} = require("./utils");
+const defaultConfig = require("./config");
+const {sleep, getKey, onExit, deepMerge} = require("./utils");
 
 async function main(options = {}) {
-    const config = getKey(options, "config", require("./config"));
+    const args = getKey(options, "args", {});
+    options.config = getKey(options, "config", defaultConfig);
+    if (args?.config) {
+        options.config = deepMerge(options.config, require(path.resolve(args.config)));
+    }
+    if (args?.debug) {
+        log.level = "debug";
+    }
+    const config = options.config;
 
     let connection = null;
     while (!connection) {

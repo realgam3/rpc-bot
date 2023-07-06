@@ -53,11 +53,33 @@ function onExit(callback) {
     process.on("uncaughtException", callback);
 }
 
+function deepMerge(...objects) {
+    const output = {};
+
+    for (let obj of objects) {
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (Array.isArray(obj[key])) {
+                    output[key] = [...obj[key]];
+                } else if (typeof obj[key] === 'object' && obj[key] !== null && output[key]) {
+                    output[key] = deepMerge(output[key], obj[key]);
+                } else {
+                    output[key] = obj[key];
+                }
+            }
+        }
+    }
+
+    return output;
+}
+
+
 module.exports = {
     sleep,
     getKey,
     popKey,
     getEnv,
     onExit,
+    deepMerge,
     trimLongStrings,
 }
