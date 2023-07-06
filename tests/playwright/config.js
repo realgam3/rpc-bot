@@ -52,17 +52,11 @@ const config = {
         },
         // Add close pages function
         closePages: async (context) => {
-            // for (let page of await context.context.pages()) {
+            // for (let page of context.context.pages()) {
             //     await page.close();
             // }
-            await context.context.close();
-            context.context = await context.browser.newContext(config.context.options);
-            context.page = await context.context.newPage();
-
-            for (let [eventName, event] of Object.entries(config.context.events)) {
-                context.context.on(eventName, event);
-            }
-            await context.page.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
+            await config.events.onTaskComplete(context);
+            await config.events.onTaskStart(context);
         },
         slowType: async (context, selector, text, options = {"delay": 500}) => {
             await context.page.type(selector, text, options);

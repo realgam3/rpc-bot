@@ -2,8 +2,8 @@ const {firefox, chromium, webkit} = require("playwright");
 
 async function getBrowser(browserConfig) {
     let browser = null;
-    const browserOptions = browserConfig.options;
-    switch (browserConfig.product) {
+    const browserOptions = browserConfig?.options;
+    switch (browserConfig?.product?.toLowerCase() || "chromium") {
         case "firefox":
             browser = await firefox.launch(browserOptions);
             break;
