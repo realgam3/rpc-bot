@@ -38,14 +38,21 @@ async function main(options = {}) {
     }
     const config = options.config;
 
+    const tries = parseInt(getKey(options, "tries", 15));
+    const delay = parseInt(getKey(options, "delay", 2000));
     let connection = null;
-    while (!connection) {
+    for (let i = 0; i < tries; i++) {
         try {
             connection = await amqplib.connect(config.queue.url);
+            break;
         } catch (error) {
             log.error(`Failed to connect to queue (${error.name}: ${error.message})`);
-            await sleep();
+            await sleep(delay);
         }
+    }
+
+    if (!connection) {
+        throw new Error(`Failed to connect to queue after ${tries} tries`);
     }
 
     await config?.events?.onInit?.(options?.context);
