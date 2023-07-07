@@ -4,7 +4,7 @@ const {getEnv} = require("./utils");
 const config = {
     "timeout": parseInt(getEnv("TIMEOUT", 30000)),
     "queue": {
-        "url": getEnv("RABBITMQ_URL", "amqp://guest:guest@queue:5672"),
+        "url": getEnv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
         "name": getEnv("QUEUE_NAME", "queue"),
         "prefetch": parseInt(getEnv("PREFETCH", 1)),
     },
