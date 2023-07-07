@@ -90,12 +90,15 @@ async function run(data = {}, options = {}) {
     // Report Results
     let res = {
         "status": context?.error ? "fail" : "ok",
-        "result": context?.results.pop(),
+        "result": context?.results[context?.results.length - 1],
         "error": (context?.error ? {
             "name": context.error.name,
             "message": context.error.message,
         } : undefined),
     };
+    if (res?.error && !res?.result?.error) {
+        res.result = undefined;
+    }
 
     // Cleanup
     await config?.events?.onTaskComplete?.(context);
