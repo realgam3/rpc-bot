@@ -2,7 +2,7 @@
 
 ____________________
 
-![Logo](//github.com/realgam3/rpc-bot-server/blob/main/ext/ctf-bot-logo.png?raw=true)
+![Logo](https://github.com/realgam3/rpc-bot-server/blob/main/ext/ctf-bot-logo.png?raw=true)
 
 
 The RPC (Remote Procedure Call) Bot Server is a queue-based system designed for managing and executing procedures across
