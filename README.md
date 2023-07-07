@@ -2,6 +2,9 @@
 
 ____________________
 
+![Logo](//raw.githubusercontent.com/realgam3/ctf-bot-server/ext/ctf-bot-logo.png)
+
+
 The RPC (Remote Procedure Call) Bot Server is a queue-based system designed for managing and executing procedures across
 multiple remote machines. This server serves as the primary controller, queuing and delegating procedures to be run on
 various machines, facilitating a streamlined and efficient approach to distributed procedure execution.
