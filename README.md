@@ -30,6 +30,10 @@ machines, please refer to the RPC Bot Client repository.
 ## Usage:
 
 ```bash
+rpc-bot --help
+```
+
+```text
 Usage: rpc-bot [options]
 
 RPC Bot Server - A sophisticated queue-driven bot designed to manage and execute procedures across multiple remote machines.
