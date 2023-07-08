@@ -8,7 +8,7 @@ const stringify = require('json-stringify-safe');
 
 const bot = require("./bot");
 const {log} = require("./logs");
-const {loadYaml} = require("./parsers");
+const {parseYaml} = require("./parsers");
 const defaultConfig = require("./config");
 const {sleep, getKey, onExit, deepMerge} = require("./utils");
 
@@ -24,7 +24,7 @@ async function main(options = {}) {
             case ".json":
             case ".yaml":
                 let data = await fs.readFile(path.resolve(args.config));
-                options.config = deepMerge(options.config, loadYaml(data.toString()));
+                options.config = deepMerge(options.config, parseYaml(data.toString()));
                 break;
             case ".js":
                 options.config = deepMerge(options.config, require(path.resolve(args.config)));
