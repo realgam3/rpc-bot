@@ -7,6 +7,9 @@ const config = {
         "url": getEnv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
         "name": getEnv("QUEUE_NAME", "queue"),
         "prefetch": parseInt(getEnv("PREFETCH", 1)),
+        "options": {
+            "durable": false,
+        }
     },
     "events": {
         "onInit": async () => {

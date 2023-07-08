@@ -59,7 +59,7 @@ async function main(options = {}) {
     await onExit(config?.events?.onExit?.bind?.(null, options?.context));
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
-        durable: false,
+        ...config?.queue?.options || {}
     });
     await channel.prefetch(config.queue.prefetch);
     await channel.consume(config.queue.name, async function (msg) {
