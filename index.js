@@ -8,15 +8,15 @@ const stringify = require('json-stringify-safe');
 
 const bot = require("./bot");
 const {log} = require("./logs");
-const {parseYaml} = require("./parsers");
+const utils = require("./utils");
+const parsers = require("./parsers");
 const defaultConfig = require("./config");
-const {sleep, getKey, onExit, deepMerge} = require("./utils");
 
 global.log = log;
 
 async function main(options = {}) {
-    const args = getKey(options, "args", {});
-    options.config = getKey(options, "config", defaultConfig);
+    const args = utils.getKey(options, "args", {});
+    options.config = utils.getKey(options, "config", defaultConfig);
     if (args?.config) {
         switch (path.extname(args.config)) {
             case undefined:
@@ -24,10 +24,10 @@ async function main(options = {}) {
             case ".json":
             case ".yaml":
                 let data = await fs.readFile(path.resolve(args.config));
-                options.config = deepMerge(options.config, parseYaml(data.toString()));
+                options.config = utils.deepMerge(options.config, parsers.parseYaml(data.toString()));
                 break;
             case ".js":
-                options.config = deepMerge(options.config, require(path.resolve(args.config)));
+                options.config = utils.deepMerge(options.config, require(path.resolve(args.config)));
                 break;
             default:
                 throw new Error(`Unsupported config file type: ${path.extname(args.config)}`);
@@ -38,8 +38,8 @@ async function main(options = {}) {
     }
     const config = options.config;
 
-    const tries = parseInt(getKey(options, "tries", 15));
-    const delay = parseInt(getKey(options, "delay", 2000));
+    const tries = parseInt(utils.getKey(options, "tries", 15));
+    const delay = parseInt(utils.getKey(options, "delay", 2000));
     let connection = null;
     for (let i = 0; i < tries; i++) {
         try {
@@ -47,7 +47,7 @@ async function main(options = {}) {
             break;
         } catch (error) {
             log.error(`Failed to connect to queue (${error.name}: ${error.message})`);
-            await sleep(delay);
+            await utils.sleep(delay);
         }
     }
 
@@ -56,7 +56,7 @@ async function main(options = {}) {
     }
 
     await config?.events?.onInit?.(options?.context);
-    await onExit(config?.events?.onExit?.bind?.(null, options?.context));
+    await utils.onExit(config?.events?.onExit?.bind?.(null, options?.context));
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         ...config?.queue?.options || {}
@@ -94,5 +94,8 @@ async function main(options = {}) {
 }
 
 module.exports = {
+    log,
     main,
+    utils,
+    parsers,
 }
