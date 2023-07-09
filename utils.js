@@ -46,7 +46,7 @@ function trimLongStrings(obj, maxLen = 48) {
     return obj;
 }
 
-function onExit(callback) {
+function atExit(callback) {
     if (!callback) {
         return;
     }
@@ -101,7 +101,7 @@ module.exports = {
     getKey,
     popKey,
     getEnv,
-    onExit,
+    atExit,
     deepMerge,
     trimLongStrings,
     isAllowedAction,

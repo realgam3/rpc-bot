@@ -10,7 +10,7 @@ const bot = require("./bot");
 const {log} = require("./logs");
 const {parseYaml} = require("./parsers");
 const defaultConfig = require("./config");
-const {sleep, getKey, onExit, deepMerge} = require("./utils");
+const {sleep, getKey, atExit, deepMerge} = require("./utils");
 
 global.log = log;
 
@@ -56,7 +56,7 @@ async function main(options = {}) {
     }
 
     await config?.events?.onInit?.(options?.context);
-    await onExit(config?.events?.onExit?.bind?.(null, options?.context));
+    await atExit(config?.events?.onExit?.bind?.(null, options?.context));
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         ...config?.queue?.options || {}
