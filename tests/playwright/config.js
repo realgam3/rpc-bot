@@ -37,7 +37,7 @@ const config = {
             }
 
             // Hook JavaScript Functions
-            await context.page.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
+            await context.context.addInitScript(`(${config.page.evaluate.document_start.toString()})();`);
         },
         "onTaskComplete": async (context) => {
             // Close Browser Context
