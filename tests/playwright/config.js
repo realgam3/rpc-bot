@@ -99,9 +99,27 @@ const config = {
     },
     "context": {
         "events": {
-            "console": message => log.debug(`[${message.type().toUpperCase()}] ${message.text()}`),
-            "error": message => log.error(message),
-            "pageerror": message => log.error(message),
+            "console": (message) => {
+                const level = message.type().toLowerCase();
+                switch (level) {
+                    case "error":
+                        log.error(`console.${level}: ${message.text()}`);
+                        break;
+                    case "warn":
+                    case "warning":
+                        log.warn(`console.warn: ${message.text()}`);
+                        break;
+                    default:
+                        log.debug(`console.error: ${message.text()}`);
+                        break;
+                }
+            },
+            "error": (message) => {
+                log.error(message);
+            },
+            "pageerror": (message) => {
+                log.error(message);
+            },
         },
         "options": {
             "ignoreHTTPSErrors": true,
@@ -111,16 +129,16 @@ const config = {
         "evaluate": {
             "document_start": function () {
                 window.open = () => {
-                    log.warn('window.open');
+                    console.warn("window.open");
                 };
                 window.prompt = () => {
-                    log.warn('window.prompt');
+                    console.warn("window.prompt");
                 };
                 window.confirm = () => {
-                    log.warn('window.confirm');
+                    console.warn("window.confirm");
                 };
                 window.alert = () => {
-                    log.warn('window.alert');
+                    console.warn("window.alert");
                 };
             }
         }
