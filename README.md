@@ -45,3 +45,7 @@ Options:
   -h, --help           display help for command
 
 ```
+
+### Extended Usage:
+
+* [Playwright Bot](https://github.com/realgam3/playwright-bot)
