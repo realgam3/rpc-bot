@@ -5,53 +5,60 @@ const {TimeOutError, MethodNotAllowedError} = require("./errors");
 
 function bot(data, context, config = defaultConfig) {
     let timedOut = false;
+    let timeout = data.timeout ?? getKey(config, "timeout", 30000);
+
+    const runBot = new Promise(async (resolve, reject) => {
+        let actions = Array.from(new Set(data.actions.map((action) => {
+            return action.action;
+        })));
+        let disAllowedActions = actions.map((action) => {
+            if (!isAllowedAction(action, config)) {
+                return action;
+            }
+        }).filter(value => value);
+        if (disAllowedActions.length > 0) {
+            return reject(new MethodNotAllowedError(`Methods not allowed: ${disAllowedActions.join(", ")}`));
+        }
+
+        for (let {action, args = []} of data.actions || []) {
+            try {
+                if (timedOut) {
+                    return reject(new TimeOutError());
+                }
+
+                let actionArgs = trimLongStrings(args);
+                log.info(`Executing: ${action}(${actionArgs.map(JSON.stringify).join(", ")})`);
+
+                const [obj, func] = getObjectAttribute(context, action);
+                if (action.split(".", 1)[0] === "extend") {
+                    args = [context, ...args];
+                }
+                context.result = await func.apply(obj, args);
+                context.results.push({
+                    "action": action,
+                    "result": context.result,
+                });
+            } catch (error) {
+                log.error(`Failed to run action ${action} (${error.name}: ${error.message})`);
+                context.error = error;
+                context.results.push({
+                    "action": action,
+                    "error": {
+                        "name": error.name,
+                        "message": error.message,
+                    }
+                });
+                return reject(error);
+            }
+        }
+        resolve();
+    });
+    if (!timeout) {
+        return runBot;
+    }
+
     return Promise.race([
-        new Promise(async (resolve, reject) => {
-            let actions = Array.from(new Set(data.actions.map((action) => {
-                return action.action;
-            })));
-            let disAllowedActions = actions.map((action) => {
-                if (!isAllowedAction(action, config)) {
-                    return action;
-                }
-            }).filter(value => value);
-            if (disAllowedActions.length > 0) {
-                return reject(new MethodNotAllowedError(`Methods not allowed: ${disAllowedActions.join(", ")}`));
-            }
-
-            for (let {action, args = []} of data.actions || []) {
-                try {
-                    if (timedOut) {
-                        return reject(new TimeOutError());
-                    }
-
-                    let actionArgs = trimLongStrings(args);
-                    log.info(`Executing: ${action}(${actionArgs.map(JSON.stringify).join(", ")})`);
-
-                    const [obj, func] = getObjectAttribute(context, action);
-                    if (action.split(".", 1)[0] === "extend") {
-                        args = [context, ...args];
-                    }
-                    context.result = await func.apply(obj, args);
-                    context.results.push({
-                        "action": action,
-                        "result": context.result,
-                    });
-                } catch (error) {
-                    log.error(`Failed to run action ${action} (${error.name}: ${error.message})`);
-                    context.error = error;
-                    context.results.push({
-                        "action": action,
-                        "error": {
-                            "name": error.name,
-                            "message": error.message,
-                        }
-                    });
-                    return reject(error);
-                }
-            }
-            resolve();
-        }),
+        runBot,
         new Promise((resolve, reject) => {
             setTimeout(() => {
                 timedOut = true;
