@@ -65,7 +65,7 @@ function bot(data, context, config = defaultConfig) {
                 reject(new TimeOutError());
             }, config.timeout);
         })
-    ])
+    ]);
 }
 
 async function run(data = {}, options = {}) {
