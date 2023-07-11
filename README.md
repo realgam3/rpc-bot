@@ -1,4 +1,4 @@
-# RPC Bot Server
+# RPC Bot (Server)
 
 ____________________
 
