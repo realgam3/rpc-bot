@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const {log} = require("./logs");
 const {parseArgs} = require("./parsers");
 
 
@@ -7,4 +8,4 @@ require(".")
     .main({
         args: parseArgs(),
     })
-    .catch(console.error);
+    .catch(log.error);
