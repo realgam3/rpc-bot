@@ -10,11 +10,11 @@ const {log} = require("./logs");
 const Context = require("./context");
 const {parseYaml} = require("./parsers");
 const defaultConfig = require("./config");
-const {sleep, getKey, atExit, deepMerge} = require("./utils");
+const {sleep, getKey, atExit, deepMerge, popKey} = require("./utils");
 
 async function main(options = {}) {
+    let config = popKey(options, "config", defaultConfig);
     const args = getKey(options, "args", {});
-    options.config = getKey(options, "config", defaultConfig);
     if (args?.config) {
         switch (path.extname(args.config)) {
             case undefined:
@@ -22,10 +22,10 @@ async function main(options = {}) {
             case ".json":
             case ".yaml":
                 let data = await fs.readFile(path.resolve(args.config));
-                options.config = deepMerge(options.config, parseYaml(data.toString()));
+                config = deepMerge(config, parseYaml(data.toString()));
                 break;
             case ".js":
-                options.config = deepMerge(options.config, require(path.resolve(args.config)));
+                config = deepMerge(config, require(path.resolve(args.config)));
                 break;
             default:
                 throw new Error(`Unsupported config file type: ${path.extname(args.config)}`);
@@ -34,11 +34,10 @@ async function main(options = {}) {
     if (args?.debug) {
         log.level = "debug";
     }
-    const config = options.config;
     const context = new Context(config, options);
 
-    const tries = parseInt(getKey(options, "tries", 15));
-    const delay = parseInt(getKey(options, "delay", 2000));
+    const tries = parseInt(getKey(context.options, "tries", 15));
+    const delay = parseInt(getKey(context.options, "delay", 2000));
     let connection = null;
     for (let i = 0; i < tries; i++) {
         try {
