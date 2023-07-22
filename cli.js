@@ -9,6 +9,6 @@ require(".")
         args: parseArgs(),
     })
     .catch((error) => {
-        log.error(error);
+        log.error(`Failed to run bot (${error.name}: ${error.message})`);
         process.exit(1);
     });
