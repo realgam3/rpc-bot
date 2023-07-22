@@ -34,7 +34,7 @@ function parseYaml(input, options = {}) {
 }
 
 function parseArgs(extendCallback) {
-    const program = new Command();
+    let program = new Command();
     program
         .name("rpc-bot")
         .description(
@@ -47,7 +47,7 @@ function parseArgs(extendCallback) {
         .option("-d, --debug", "output extra debugging")
         .option("-c, --config <path>", "path to config.(js|yaml|json) file");
 
-    extendCallback?.(program);
+    program = extendCallback?.(program) || program;
 
     program.parse();
 
