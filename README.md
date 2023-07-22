@@ -22,7 +22,8 @@ across your networked environment.
   can be used to orchestrate the execution of procedures across multiple machines, allowing you to focus on the
   challenge itself.
 * This bot is extendable: The RPC Bot Server is designed to be extendable. You can easily add your own procedures to
-  the system, allowing you to customize the bot to your needs. simple example in "tests/playwright" folder.
+  the system, allowing you to customize the bot to your needs.
+  simple example in https://github.com/realgam3/playwright-bot.
 
 This project is a vital component of the RPC Bot system. For the client-side component that resides on the remote
 machines, please refer to the RPC Bot Client repository.

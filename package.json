@@ -1,6 +1,7 @@
 {
   "name": "rpc-bot",
   "version": "0.1.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -22,6 +23,5 @@
     "minimatch": "^9.0.2",
     "pino": "^8.14.1",
     "pino-pretty": "^10.0.1"
-  },
-  "description": ""
+  }
 }
