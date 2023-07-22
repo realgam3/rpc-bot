@@ -8,4 +8,7 @@ require(".")
     .main({
         args: parseArgs(),
     })
-    .catch(log.error);
+    .catch((error) => {
+        log.error(error);
+        process.exit(1);
+    });

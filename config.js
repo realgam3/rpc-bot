@@ -1,4 +1,3 @@
-const {log} = require("./logs");
 const {getEnv} = require("./utils");
 
 const config = {
@@ -12,16 +11,16 @@ const config = {
         }
     },
     "events": {
-        "onInit": async () => {
-            log.info(`Initializing...`);
+        "onInit": async function () {
+            this.log.info(`Initializing...`);
         },
     },
     "extend": {
-        "example": async () => {
-            log.info(`Example extend function`);
+        "example": async function () {
+            this.log.info(`Example extend function`);
         },
-        "notAllowed": async () => {
-            log.warn(`This function is not allowed`);
+        "notAllowed": async function () {
+            this.log.warn(`This function is not allowed`);
         }
     },
     "allowed_actions": [

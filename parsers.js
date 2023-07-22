@@ -2,8 +2,9 @@ const yaml = require('js-yaml');
 const {Command} = require("commander");
 const unsafe = require('js-yaml-js-types').all;
 
+const version = "0.1.0";
 const schema = yaml.DEFAULT_SCHEMA.extend(unsafe);
-const ENV_VAR_PATTERN = /(?<escape>\$)*\$(?:(?<variable_no_default>\w+\b)|\{(?<variable>\w+)(?::?(?<action>[\-?])(?<value>[^}]+))?})/g;
+const envPattern = /(?<escape>\$)*\$(?:(?<variable_no_default>\w+\b)|\{(?<variable>\w+)(?::?(?<action>[\-?])(?<value>[^}]+))?})/g;
 
 function replaceEnvVars(...match) {
     let groups = match.pop();
@@ -28,7 +29,7 @@ function replaceEnvVars(...match) {
 
 
 function parseYaml(input, options = {}) {
-    const preprocessedInput = input.replace(ENV_VAR_PATTERN, replaceEnvVars);
+    const preprocessedInput = input.replace(envPattern, replaceEnvVars);
     return yaml.load(preprocessedInput, {...options, schema});
 }
 
@@ -40,7 +41,7 @@ function parseArgs(extendCallback) {
             "RPC Bot Server - A sophisticated queue-driven bot " +
             "designed to manage and execute procedures across multiple remote machines."
         )
-        .version("0.1.0");
+        .version(version);
 
     program
         .option("-d, --debug", "output extra debugging")

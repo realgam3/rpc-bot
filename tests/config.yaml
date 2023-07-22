@@ -3,11 +3,11 @@ queue:
   url: ${RABBITMQ_URL:-amqp://guest:guest@localhost:5672}
 events:
   "onInit": !!js/function >
-    async function (context) {
-      log.info(`Initializing Test...`);
+    async function () {
+      this.log.info(`Initializing Test...`);
     }
 extend:
   test: !!js/function >
-    async function (context) {
-      log.info("Test function");
+    async function () {
+      this.log.info("Test function");
     }

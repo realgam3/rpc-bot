@@ -6,13 +6,11 @@ const amqplib = require("amqplib");
 const {promises: fs} = require("fs");
 const stringify = require('json-stringify-safe');
 
-const bot = require("./bot");
 const {log} = require("./logs");
+const Context = require("./context");
 const {parseYaml} = require("./parsers");
 const defaultConfig = require("./config");
 const {sleep, getKey, atExit, deepMerge} = require("./utils");
-
-global.log = log;
 
 async function main(options = {}) {
     const args = getKey(options, "args", {});
@@ -37,6 +35,7 @@ async function main(options = {}) {
         log.level = "debug";
     }
     const config = options.config;
+    const context = new Context(config, options);
 
     const tries = parseInt(getKey(options, "tries", 15));
     const delay = parseInt(getKey(options, "delay", 2000));
@@ -55,8 +54,8 @@ async function main(options = {}) {
         throw new Error(`Failed to connect to queue after ${tries} tries`);
     }
 
-    await config?.events?.onInit?.(options?.context);
-    await atExit(config?.events?.onExit?.bind?.(null, options?.context));
+    await context.onInit();
+    await atExit(context.onExit);
     const channel = await connection.createChannel();
     await channel.assertQueue(config.queue.name, {
         ...config?.queue?.options || {}
@@ -68,7 +67,7 @@ async function main(options = {}) {
         try {
             const data = JSON.parse(msg.content.toString());
 
-            let res = await bot.run(data, options);
+            let res = await context.run(data);
             let resMsg = stringify(res);
 
             if (data?.webhook) {
