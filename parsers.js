@@ -38,7 +38,7 @@ function parseArgs(extendCallback) {
     program
         .name("rpc-bot")
         .description(
-            "RPC Bot Server - A sophisticated queue-driven bot " +
+            "RPC Bot - A sophisticated queue-driven bot " +
             "designed to manage and execute procedures across multiple remote machines."
         )
         .version(version);
