@@ -1,7 +1,7 @@
 {
-  "name": "rpc-bot",
-  "version": "0.1.0",
-  "description": "",
+  "name": "@rpc-bot/bot",
+  "version": "0.1.1",
+  "description": "RPC Bot Server",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
   "author": "Tomer Zait (realgam3)",
   "license": "Apache-2.0",
   "bin": {
-    "rpc-bot": "./cli.js"
+    "rpc-bot": "cli.js"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
@@ -23,5 +23,16 @@
     "minimatch": "^9.0.2",
     "pino": "^8.14.1",
     "pino-pretty": "^10.0.1"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realgam3/rpc-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/realgam3/rpc-bot/issues"
+  },
+  "homepage": "https://github.com/realgam3/rpc-bot#readme"
 }
